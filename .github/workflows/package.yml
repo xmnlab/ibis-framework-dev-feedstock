@@ -17,22 +17,57 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    # This workflow contains a single job called "build"
-    name: Ex1 (${{ matrix.python-version }}, ${{ matrix.os }})
-      runs-on: ${{ matrix.os }}
-      strategy:
-        fail-fast: false
-        matrix:
-          os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-          python-version: ["3.7"]
-      steps:
-        - uses: goanpeca/setup-miniconda@v1
-          with:
-            auto-update-conda: true
-            python-version: ${{ matrix.python-version }}
-        - name: Conda info with bash
-          shell: bash -l {0}
-          run: conda info
-        - name: Conda list with powershell
-          shell: pwsh
-          run: conda list
+    name: Build (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # os: ["ubuntu-latest", "macos-latest"]
+        os: ["ubuntu-latest"]
+        python-version: ["3.7"]
+    steps:
+      - uses: goanpeca/setup-miniconda@v1
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+      - name: conda and conda forge settings
+        run: |
+          conda config --add channels conda-forge
+          conda config --set channel_priority strict
+      - name: conda info
+        run: |
+          conda info
+      - name: conda update conda
+        run: conda update -y -n base conda
+      - name: install dependencies
+        run: |
+          conda create -y -n ibis-feedstock \
+            conda-build \
+            anaconda-client \
+            click \
+            ruamel \
+            ruamel.yaml \
+            jinja2 \
+            plumbum \
+            pathlib
+      - name: Conda list
+        run: conda list -n ibis-feedstock
+      - name: git clone
+        run: git clone https://github.com/ibis-project/ibis.git
+      - name: conda build
+        run: |
+          export PATH="/usr/share/miniconda/bin:$PATH"
+          cd ibis
+          source activate ibis-feedstock
+          python setup.py install
+          python ci/feedstock.py clone
+          python ci/feedstock.py update
+          python ci/feedstock.py build --python 3.7
+      - name: publish conda package
+        env: # Or as an environment variable
+        ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
+        if: ${{ success() && (github.event_name == 'pull_request' || github.event_name == 'schedule') }}
+        run: |
+          export PATH="/usr/share/miniconda/bin:$PATH"
+          source activate ibis-feedstock
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label dev --skip-existing /usr/share/miniconda/conda-bld/linux-64/ibis-framework-*.tar.bz2
