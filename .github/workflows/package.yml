@@ -33,12 +33,13 @@ jobs:
           activate-environment: ibis-feedstock
           channels: conda-forge
           channel-priority: strict
+          auto-update-conda: true
       - name: conda info
+        shell: bash -l {0}
         run: |
           conda info
-      - name: conda update conda
-        run: conda update -y -n base conda
       - name: install dependencies
+        shell: bash -l {0}
         run: |
           conda install -y -n ibis-feedstock \
             conda-build \
@@ -50,10 +51,13 @@ jobs:
             plumbum \
             pathlib
       - name: Conda list
+        shell: bash -l {0}
         run: conda list
       - name: git clone
+        shell: bash -l {0}
         run: git clone https://github.com/ibis-project/ibis.git
       - name: conda build
+        shell: bash -l {0}
         run: |
           cd ibis
           python setup.py install
@@ -61,6 +65,7 @@ jobs:
           python ci/feedstock.py update
           python ci/feedstock.py build --python 3.7
       - name: publish conda package
+        shell: bash -l {0}
         env: # Or as an environment variable
           ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
         if: ${{ success() && (github.event_name == 'pull_request' || github.event_name == 'schedule') }}
