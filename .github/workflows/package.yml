@@ -30,10 +30,9 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-      - name: conda and conda forge settings
-        run: |
-          conda config --add channels conda-forge
-          conda config --set channel_priority strict
+          activate-environment: ibis-feedstock
+          channels: conda-forge
+          channel-priority: strict
       - name: conda info
         run: |
           conda info
@@ -51,14 +50,11 @@ jobs:
             plumbum \
             pathlib
       - name: Conda list
-        run: conda list -n ibis-feedstock
+        run: conda list
       - name: git clone
         run: git clone https://github.com/ibis-project/ibis.git
       - name: conda build
         run: |
-          export PATH="/usr/share/miniconda/bin:$PATH"
-          cd ibis
-          source activate ibis-feedstock
           python setup.py install
           python ci/feedstock.py clone
           python ci/feedstock.py update
@@ -68,6 +64,4 @@ jobs:
           ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
         if: ${{ success() && (github.event_name == 'pull_request' || github.event_name == 'schedule') }}
         run: |
-          export PATH="/usr/share/miniconda/bin:$PATH"
-          source activate ibis-feedstock
           anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label dev --skip-existing /usr/share/miniconda/envs/ibis-feedstock/conda-bld/linux-64/ibis-framework-*.tar.bz2
