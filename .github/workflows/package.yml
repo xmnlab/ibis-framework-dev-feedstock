@@ -40,7 +40,7 @@ jobs:
         run: conda update -y -n base conda
       - name: install dependencies
         run: |
-          conda create -y -n ibis-feedstock \
+          conda install -y -n ibis-feedstock \
             conda-build \
             anaconda-client \
             click \
@@ -55,6 +55,7 @@ jobs:
         run: git clone https://github.com/ibis-project/ibis.git
       - name: conda build
         run: |
+          cd ibis
           python setup.py install
           python ci/feedstock.py clone
           python ci/feedstock.py update
