@@ -65,7 +65,7 @@ jobs:
           python ci/feedstock.py build --python 3.7
       - name: publish conda package
         env: # Or as an environment variable
-        ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
+          ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
         if: ${{ success() && (github.event_name == 'pull_request' || github.event_name == 'schedule') }}
         run: |
           export PATH="/usr/share/miniconda/bin:$PATH"
