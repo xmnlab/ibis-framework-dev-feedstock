@@ -70,4 +70,4 @@ jobs:
         run: |
           export PATH="/usr/share/miniconda/bin:$PATH"
           source activate ibis-feedstock
-          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label dev --skip-existing /usr/share/miniconda/conda-bld/linux-64/ibis-framework-*.tar.bz2
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label dev --skip-existing /usr/share/miniconda/envs/ibis-feedstock/conda-bld/linux-64/ibis-framework-*.tar.bz2
