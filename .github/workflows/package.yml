@@ -67,6 +67,6 @@ jobs:
         shell: bash -l {0}
         env: # Or as an environment variable
           ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
-        if: ${{ success() && (github.event_name == 'pull_request' || github.event_name == 'schedule') }}
+        if: ${{ success() && (github.event_name == 'push' || github.event_name == 'schedule') }}
         run: |
           anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label dev --skip-existing /usr/share/miniconda/envs/ibis-feedstock/conda-bld/linux-64/ibis-framework-*.tar.bz2
