@@ -30,7 +30,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
           activate-environment: omnisci
-          channels: conda-forge,xmnlab/label/omnisci
+          channels: conda-forge
           channel-priority: strict
 
       - name: conda info
