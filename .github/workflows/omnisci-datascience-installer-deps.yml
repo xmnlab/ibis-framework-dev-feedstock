@@ -48,7 +48,7 @@ jobs:
         shell: bash -l {0}
         run: |
           conda build conda-recipes/ibis-framework
-          PKG_IBIS_PATH=$(ls /usr/share/miniconda/envs/omnisci/conda-bld/osx-64/ibis-framework-*.tar.bz2)
+          PKG_IBIS_PATH=$(ls /usr/local/miniconda/envs/omnisci/conda-bld/osx-64/ibis-framework-*.tar.bz2)
           echo "::set-output name=filename::$PKG_IBIS_PATH"
 
       - name: build holoviews
