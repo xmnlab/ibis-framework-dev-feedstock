@@ -1,0 +1,69 @@
+# This is a basic workflow to help you get started with Actions
+
+name: omnisci_datascience_installer_deps
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    name: Build (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # os: ["ubuntu-latest", "macos-latest"]
+        os: ["macos-latest"]
+        python-version: ["3.7"]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: conda-incubator/setup-miniconda@v1
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+          activate-environment: omnisci
+          channels: conda-forge
+          channel-priority: strict
+
+      - name: conda info
+        shell: bash -l {0}
+        run: |
+          conda info
+
+      - name: install dependencies
+        shell: bash -l {0}
+        run: |
+          conda install -y -n omnisci conda-build
+
+      - name: build ibis-framework
+        shell: bash -l {0}
+        run: conda build conda-recipes/ibis-framework
+
+      - name: build holoviews
+        shell: bash -l {0}
+        run: conda build conda-recipes/holoviews
+
+      - name: build hvplot
+        shell: bash -l {0}
+        run: conda build conda-recipes/hvplot
+
+      - name: publish conda package
+        shell: bash -l {0}
+        env: # Or as an environment variable
+          ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
+        if: ${{ success() && github.event_name == 'push' }}
+        run: |
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing \
+            /usr/share/miniconda/envs/omnisci/conda-bld/osx-64/ibis-framework-*.tar.bz2
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing \
+            /usr/share/miniconda/envs/omnisci/conda-bld/osx-64/holoviews-*.tar.bz2
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing \
+            /usr/share/miniconda/envs/omnisci/conda-bld/osx-64/hvplot-*.tar.bz2
