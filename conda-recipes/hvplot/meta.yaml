@@ -32,10 +32,6 @@ test:
   imports:
     - hvplot
     - hvplot.pandas
-  commands:
-    - pip check
-  requires:
-    - pip
 
 about:
   home: https://pyviz.github.io/hvplot
