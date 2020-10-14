@@ -51,6 +51,10 @@ jobs:
         shell: bash -l {0}
         run: conda build conda-recipes/holoviews
 
+      - name: build hvplot
+        shell: bash -l {0}
+        run: conda build conda-recipes/hvplot
+
       - name: publish conda package
         shell: bash -l {0}
         env: # Or as an environment variable
