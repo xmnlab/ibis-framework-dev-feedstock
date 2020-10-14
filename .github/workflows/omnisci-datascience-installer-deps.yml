@@ -41,7 +41,7 @@ jobs:
       - name: install dependencies
         shell: bash -l {0}
         run: |
-          conda install -y -n omnisci conda-build
+          conda install -y -n omnisci conda-build anaconda-client
 
       - name: build ibis-framework
         shell: bash -l {0}
