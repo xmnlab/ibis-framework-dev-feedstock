@@ -71,11 +71,8 @@ jobs:
         shell: bash -l {0}
         env:
           ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
-          PKG_IBIS_PATH: ${{ steps.pkg_ibis.outputs.filename }}
-          PKG_HOLOVIEWS_PATH: ${{ steps.pkg_holoviews.outputs.filename }}
-          PKG_HVPLOT_PATH: ${{ steps.pkg_hvplot.outputs.filename }}
         if: ${{ success() && github.event_name == 'push' }}
         run: |
-          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ PKG_IBIS_PATH }}
-          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ PKG_HOLOVIEWS_PATH }}
-          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ PKG_HVPLOT_PATH }}
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ steps.pkg_ibis.outputs.filename }}
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ steps.pkg_holoviews.outputs.filename }}
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ steps.pkg_hvplot.outputs.filename }}
