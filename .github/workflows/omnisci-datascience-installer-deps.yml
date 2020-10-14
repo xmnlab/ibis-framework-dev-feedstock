@@ -44,26 +44,38 @@ jobs:
           conda install -y -n omnisci conda-build anaconda-client
 
       - name: build ibis-framework
+        id: pkg_ibis
         shell: bash -l {0}
-        run: conda build conda-recipes/ibis-framework
+        run: |
+          conda build conda-recipes/ibis-framework
+          PKG_IBIS_PATH=$(ls /usr/share/miniconda/envs/omnisci/conda-bld/osx-64/ibis-framework-*.tar.bz2)
+          echo "::set-output name=filename::$PKG_IBIS_PATH"
 
       - name: build holoviews
+        id: pkg_holoviews
         shell: bash -l {0}
-        run: conda build conda-recipes/holoviews
+        run: |
+          conda build conda-recipes/holoviews
+          PKG_HOLOVIEWS_PATH=$(ls /usr/local/miniconda/envs/omnisci/conda-bld/noarch/holoviews-*.tar.bz2)
+          echo "::set-output name=filename::$PKG_HOLOVIEWS_PATH"
 
       - name: build hvplot
+        id: pkg_hvplot
         shell: bash -l {0}
-        run: conda build conda-recipes/hvplot
+        run: |
+          conda build conda-recipes/hvplot
+          PKG_HVPLOT_PATH=$(ls /usr/local/miniconda/envs/omnisci/conda-bld/noarch/hvplot-*.tar.bz2)
+          echo "::set-output name=filename::$PKG_HVPLOT_PATH"
 
       - name: publish conda package
         shell: bash -l {0}
-        env: # Or as an environment variable
+        env:
           ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
+          PKG_IBIS_PATH: ${{ steps.pkg_ibis.outputs.filename }}
+          PKG_HOLOVIEWS_PATH: ${{ steps.pkg_holoviews.outputs.filename }}
+          PKG_HVPLOT_PATH: ${{ steps.pkg_hvplot.outputs.filename }}
         if: ${{ success() && github.event_name == 'push' }}
         run: |
-          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing \
-            /usr/share/miniconda/envs/omnisci/conda-bld/osx-64/ibis-framework-*.tar.bz2
-          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing \
-            /usr/share/miniconda/envs/omnisci/conda-bld/osx-64/holoviews-*.tar.bz2
-          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing \
-            /usr/share/miniconda/envs/omnisci/conda-bld/osx-64/hvplot-*.tar.bz2
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ PKG_IBIS_PATH }}
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ PKG_HOLOVIEWS_PATH }}
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ PKG_HVPLOT_PATH }}
