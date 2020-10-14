@@ -24,7 +24,7 @@ requirements:
     - python
     - bokeh >=1.0.0
     - colorcet >=2
-    - holoviews >=1.11.0
+    - holoviews >=1.13.4
     - numpy >=1.15
     - pandas
 
