@@ -49,20 +49,25 @@ jobs:
             jinja2 \
             plumbum \
             pathlib
+
       - name: Conda list
         shell: bash -l {0}
         run: conda list
-      - name: git clone
+
+      - name: copy and prepare recipe
         shell: bash -l {0}
-        run: git clone https://github.com/ibis-project/ibis.git
+        run: |
+          wget https://raw.githubusercontent.com/ibis-project/ibis/master/ci/recipe/meta.yaml
+          export URL_ROOT="https://github.com/ibis-project/ibis/archive"
+          export URL_FILE="${URL_ROOT}/master.tar.gz"
+          export IBIS_VERSION=$(conda search ibis-framework|tail -n 1|grep -o -E '[0-9]+\.[0-9]+\.[0-9]+')
+          sed -i "s|${URL_ROOT}/{{ version }}.tar.gz|${URL_FILE}|" meta.yaml
+          sed -i "s|{{ version }}|${IBIS_VERSION}|" meta.yaml
+
       - name: conda build
         shell: bash -l {0}
         run: |
-          cd ibis
-          python setup.py install
-          python ci/feedstock.py clone
-          python ci/feedstock.py update
-          python ci/feedstock.py build --python 3.7
+          conda build .
       - name: publish conda package
         shell: bash -l {0}
         env: # Or as an environment variable
