@@ -5,11 +5,13 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/tonyfast/hvplot/archive/fe0515ab10d10274a123419bfdda4e866cf93c71.zip
-  sha256: fb97d80ca29b6f99c2630d5a6f3c9f2c24d7fda2981facb33ccd100e0997f23e
+  # url: https://github.com/tonyfast/hvplot/archive/fe0515ab10d10274a123419bfdda4e866cf93c71.zip
+  # sha256: fb97d80ca29b6f99c2630d5a6f3c9f2c24d7fda2981facb33ccd100e0997f23e
+  git_url: https://github.com/tonyfast/hvplot.git
+  git_rev: fe0515ab10d10274a123419bfdda4e866cf93c71
 
 build:
-  number: 99
+  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
   noarch: python
   # ModuleNotFoundError: No module named 'hvplot.__main__'
   # entry_points:

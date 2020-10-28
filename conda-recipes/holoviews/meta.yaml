@@ -5,11 +5,14 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/holoviz/holoviews/archive/c26b721fa9d344e72ee280718936a046c3c60507.zip
-  sha256: 6466a7968ead371ac5dfee2eb69699e13b3d7a2dcaf68242df2b7e17b3f549e1
+  # url: https://github.com/holoviz/holoviews/archive/c26b721fa9d344e72ee280718936a046c3c60507.zip
+  # sha256: 6466a7968ead371ac5dfee2eb69699e13b3d7a2dcaf68242df2b7e17b3f549e1
+  git_url: https://github.com/holoviz/holoviews.git
+  git_rev: c26b721fa9d344e72ee280718936a046c3c60507
+
 
 build:
-  number: 99
+  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
   noarch: python
   script: {{ PYTHON }} -m pip install . --no-deps -vv
   entry_points:
