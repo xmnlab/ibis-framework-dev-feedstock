@@ -59,10 +59,12 @@ jobs:
         run: |
           wget https://raw.githubusercontent.com/ibis-project/ibis/master/ci/recipe/meta.yaml
           export URL_ROOT="https://github.com/ibis-project/ibis/archive"
-          export URL_FILE="${URL_ROOT}/master.tar.gz"
+          export GIT_URL="https://github.com/ibis-project/ibis.git"
+          # export URL_FILE="${URL_ROOT}/master.tar.gz"
           export IBIS_VERSION=$(conda search ibis-framework|tail -n 1|grep -o -E '[0-9]+\.[0-9]+\.[0-9]+')
-          sed -i "s|${URL_ROOT}/{{ version }}.tar.gz|${URL_FILE}|" meta.yaml
+          sed -i "s|url: ${URL_ROOT}/{{ version }}.tar.gz|git_url: ${GIT_URL}\n  git_rev: master|" meta.yaml
           sed -i "s|{{ version }}|${IBIS_VERSION}|" meta.yaml
+          sed -i "s|number: 1|number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}|" meta.yaml
 
       - name: conda build
         shell: bash -l {0}
