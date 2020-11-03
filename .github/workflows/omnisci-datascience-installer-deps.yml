@@ -51,21 +51,21 @@ jobs:
           PKG_IBIS_PATH=$(ls /usr/local/miniconda/envs/omnisci/conda-bld/osx-64/ibis-framework-*.tar.bz2)
           echo "::set-output name=filename::$PKG_IBIS_PATH"
 
-      - name: build holoviews
-        id: pkg_holoviews
-        shell: bash -l {0}
-        run: |
-          conda build conda-recipes/holoviews
-          PKG_HOLOVIEWS_PATH=$(ls /usr/local/miniconda/envs/omnisci/conda-bld/noarch/holoviews-*.tar.bz2)
-          echo "::set-output name=filename::$PKG_HOLOVIEWS_PATH"
+          #      - name: build holoviews
+          #        id: pkg_holoviews
+          #        shell: bash -l {0}
+          #        run: |
+          #          conda build conda-recipes/holoviews
+          #          PKG_HOLOVIEWS_PATH=$(ls /usr/local/miniconda/envs/omnisci/conda-bld/noarch/holoviews-*.tar.bz2)
+          #          echo "::set-output name=filename::$PKG_HOLOVIEWS_PATH"
 
-      - name: build hvplot
-        id: pkg_hvplot
-        shell: bash -l {0}
-        run: |
-          conda build conda-recipes/hvplot
-          PKG_HVPLOT_PATH=$(ls /usr/local/miniconda/envs/omnisci/conda-bld/noarch/hvplot-*.tar.bz2)
-          echo "::set-output name=filename::$PKG_HVPLOT_PATH"
+          #      - name: build hvplot
+          #        id: pkg_hvplot
+          #        shell: bash -l {0}
+          #        run: |
+          #          conda build conda-recipes/hvplot
+          #          PKG_HVPLOT_PATH=$(ls /usr/local/miniconda/envs/omnisci/conda-bld/noarch/hvplot-*.tar.bz2)
+          #          echo "::set-output name=filename::$PKG_HVPLOT_PATH"
 
       - name: publish conda package
         shell: bash -l {0}
@@ -73,6 +73,6 @@ jobs:
           ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
         if: ${{ success() && github.event_name == 'push' }}
         run: |
-          anaconda --token $ANACONDA_TOKEN upload --user quansight --label omnisci --skip-existing ${{ steps.pkg_ibis.outputs.filename }}
-          anaconda --token $ANACONDA_TOKEN upload --user quansight --label omnisci --skip-existing ${{ steps.pkg_holoviews.outputs.filename }}
-          anaconda --token $ANACONDA_TOKEN upload --user quansight --label omnisci --skip-existing ${{ steps.pkg_hvplot.outputs.filename }}
+          anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ steps.pkg_ibis.outputs.filename }}
+          # anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ steps.pkg_holoviews.outputs.filename }}
+          # anaconda --token $ANACONDA_TOKEN upload --user xmnlab --label omnisci --skip-existing ${{ steps.pkg_hvplot.outputs.filename }}
